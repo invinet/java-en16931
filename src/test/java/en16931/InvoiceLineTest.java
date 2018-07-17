@@ -15,8 +15,13 @@ import static org.junit.Assert.*;
  */
 public class InvoiceLineTest {
     
-    private Tax tax = new Tax(0.21, "S", "IVA", "");
-    private InvoiceLine instance = new InvoiceLine("foo", 3, 20.1, "EUR", tax);
+    private final Tax tax;
+    private final InvoiceLine instance;
+
+    public InvoiceLineTest() {
+        this.tax = new Tax(0.21, "S", "IVA", "");
+        this.instance = new InvoiceLine("foo", 3, 20.1, "EUR", tax);
+    }
 
     /**
      * Test of getItemName method, of class InvoiceLine.
@@ -144,5 +149,26 @@ public class InvoiceLineTest {
         instance.setTax(tax);
         assertEquals(tax, instance.getTax());
     }
-    
+
+    /**
+     * Tests of hasTax method, of class InvoiceLine
+     */
+    @Test
+    public void testhasTaxNull() {
+        System.out.println("hasTaxNull");
+        assertTrue(instance.hasTax(null));
+    }
+
+    @Test
+    public void testhasTaxTrue() {
+        System.out.println("hasTaxTrue");
+        assertTrue(instance.hasTax(tax));
+    }
+
+    @Test
+    public void testhasTaxFalse() {
+        System.out.println("hasTaxFalse");
+        Tax newTax = new Tax(0.1, "AE", "IVA", "");
+        assertFalse(instance.hasTax(newTax));
+    }
 }

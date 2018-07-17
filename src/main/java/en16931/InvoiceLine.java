@@ -71,7 +71,7 @@ public class InvoiceLine {
     }
 
     public MonetaryAmount getLineExtensionAmount() {
-        return this.price.multiply(this.quantity);
+        return this.price.multiply(this.quantity).with(Monetary.getDefaultRounding());
     }
 
     public Tax getTax() {
@@ -82,4 +82,11 @@ public class InvoiceLine {
         this.tax = tax;
     }
 
+    public boolean hasTax(Tax tax) {
+        if (tax == null) {
+            return true;
+        } else {
+            return this.tax == tax;
+        }
+    }
 }

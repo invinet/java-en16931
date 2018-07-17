@@ -3,7 +3,9 @@ package en16931;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.money.CurrencyUnit;
+import javax.money.MonetaryAmount;
 import javax.money.UnknownCurrencyException;
+import org.javamoney.moneta.Money;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -17,18 +19,22 @@ public class InvoiceTest {
     private final Entity seller;
     private final Entity buyer;
     private final Tax tax;
+    private final Tax tax1;
     private final InvoiceLine line1;
     private final InvoiceLine line2;
+    private final InvoiceLine line3;
 
     public InvoiceTest() {
-        this.instance = new Invoice("1", "EUR");
+        this.instance = new Invoice("1", "EUR", false);
         this.seller = new Entity("Acme Inc.", "VAT", "ES34626691F", "ES34626691F",
                 "Acme INc.", "acme@acme.io", "ES76281415Y", "ES:VAT");
         this.buyer = new Entity("Corp Inc.", "VAT", "ES76281415Y", "ES76281415Y",
                 "Corp INc.", "corp@corp.io", "ES76281415Y", "ES:VAT");
         this.tax = new Tax(0.21, "S", "IVA", "");
+        this.tax1 = new Tax(0.1, "AE", "IVA", "");
         this.line1 = new InvoiceLine("foo", 3, 20.1, "EUR", tax);
         this.line2 = new InvoiceLine("bar", 5, 2.7, "EUR", tax);
+        this.line3 = new InvoiceLine("bar", 2, 10.3, "EUR", tax1);
     }
 
     /**
@@ -77,7 +83,7 @@ public class InvoiceTest {
 
     @Test(expected = UnknownCurrencyException.class)
     public void setCurrencyWithInvalidCurrencyCode() {
-        Invoice i = new Invoice("1", "AAA");
+        Invoice i = new Invoice("1", "AAA", false);
     }
 
     
@@ -204,12 +210,152 @@ public class InvoiceTest {
     @Test
     public void testAddLine() {
         System.out.println("addLine");
-        ArrayList<InvoiceLine> expResult = new ArrayList<InvoiceLine>();
+        ArrayList<InvoiceLine> expResult = new ArrayList<>();
         expResult.add(line1);
         expResult.add(line2);
         instance.addLine(line1);
         instance.addLine(line2);
         assertEquals(expResult, instance.getLines());
     }
-    
+
+    /**
+     * Test of linesWithTaxes method, of class Invoice.
+     */
+    @Test
+    public void testLinesWithTaxesNull() {
+        System.out.println("linesWithTaxesNull");
+        ArrayList<InvoiceLine> expResult = new ArrayList<>();
+        expResult.add(line1);
+        expResult.add(line2);
+        expResult.add(line3);
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        assertEquals(expResult, instance.linesWithTaxes(null));
+    }
+
+    @Test
+    public void testLinesWithTaxes() {
+        System.out.println("linesWithTaxes");
+        ArrayList<InvoiceLine> expResultTax = new ArrayList<>();
+        expResultTax.add(line1);
+        expResultTax.add(line2);
+        ArrayList<InvoiceLine> expResultTax1 = new ArrayList<>();
+        expResultTax1.add(line3);
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        assertEquals(expResultTax, instance.linesWithTaxes(tax));
+        assertEquals(expResultTax1, instance.linesWithTaxes(tax1));
+    }
+
+    /**
+     * test of grossSubtotal method, of class Invoice
+     */
+    @Test
+    public void testGrossSubtotal() {
+        System.out.println("grossSubtotal");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        MonetaryAmount expResultAll = Money.of(94.4, "EUR");
+        MonetaryAmount expResultTax = Money.of(73.8, "EUR");
+        MonetaryAmount expResultTax1 = Money.of(20.6, "EUR");
+        assertEquals(expResultAll, instance.grossSubtotal(null));
+        assertEquals(expResultTax, instance.grossSubtotal(tax));
+        assertEquals(expResultTax1, instance.grossSubtotal(tax1));
+    }
+
+    /**
+     * test of taxableBase method, of class Invoice.
+     */
+    @Test
+    public void testTaxableBase() {
+        System.out.println("taxableBase");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        MonetaryAmount expResultAll = Money.of(94.4, "EUR");
+        MonetaryAmount expResultTax = Money.of(73.8, "EUR");
+        MonetaryAmount expResultTax1 = Money.of(20.6, "EUR");
+        assertEquals(expResultAll, instance.taxableBase(null));
+        assertEquals(expResultTax, instance.taxableBase(tax));
+        assertEquals(expResultTax1, instance.taxableBase(tax1));
+    }
+
+    /**
+     * test of uniqueTaxes method, of class Invoice.
+     */
+    @Test
+    public void testUniqueTaxes() {
+        System.out.println("uniqueTaxes");
+        ArrayList<Tax> expResult = new ArrayList<>();
+        expResult.add(tax);
+        expResult.add(tax1);
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        assertEquals(expResult, instance.uniqueTaxes());
+    }
+
+    /**
+     * test of taxAmount method, of class Invoice.
+     */
+    @Test
+    public void testTaxAmount() {
+        System.out.println("taxAmount");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        MonetaryAmount expResultAll = Money.of(17.56, "EUR");
+        MonetaryAmount expResultTax = Money.of(15.5, "EUR");
+        MonetaryAmount expResultTax1 = Money.of(2.06, "EUR");
+        assertEquals(expResultAll, instance.taxAmount(null));
+        assertEquals(expResultTax, instance.taxAmount(tax));
+        assertEquals(expResultTax1, instance.taxAmount(tax1));
+    }
+
+    /**
+     * test of subtotal method, of class Invoice.
+     */
+    @Test
+    public void testSubtotal() {
+        System.out.println("subtotal");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        MonetaryAmount expResultAll = Money.of(94.4, "EUR");
+        MonetaryAmount expResultTax = Money.of(73.8, "EUR");
+        MonetaryAmount expResultTax1 = Money.of(20.6, "EUR");
+        assertEquals(expResultAll, instance.subtotal(null));
+        assertEquals(expResultTax, instance.subtotal(tax));
+        assertEquals(expResultTax1, instance.subtotal(tax1));
+    }
+
+    /**
+     * test of total method, of class Invoice.
+     */
+    @Test
+    public void testTotal() {
+        System.out.println("total");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        MonetaryAmount expResult = Money.of(111.96, "EUR");
+        assertEquals(expResult, instance.total());
+    }
+
+    /**
+     * test of moneyToString method, of class Invoice.
+     */
+    @Test
+    public void testMoneyToString() {
+        System.out.println("total");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        String expResult = "111.96";
+        assertEquals(expResult, instance.moneyToString(instance.total()));
+    }
+
 }
