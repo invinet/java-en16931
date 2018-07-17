@@ -6,8 +6,12 @@ import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import javax.money.UnknownCurrencyException;
 import org.javamoney.moneta.Money;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  *
@@ -35,6 +39,22 @@ public class InvoiceTest {
         this.line1 = new InvoiceLine("foo", 3, 20.1, "EUR", tax);
         this.line2 = new InvoiceLine("bar", 5, 2.7, "EUR", tax);
         this.line3 = new InvoiceLine("bar", 2, 10.3, "EUR", tax1);
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
     }
 
     /**
@@ -356,6 +376,106 @@ public class InvoiceTest {
         instance.addLine(line3);
         String expResult = "111.96";
         assertEquals(expResult, instance.moneyToString(instance.total()));
+    }
+
+    /**
+     * Test of getLineExtensionAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetLineExtensionAmount() {
+        System.out.println("getLineExtensionAmount");
+        String expResult = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setLineExtensionAmount(expResult);
+        String result = i.getLineExtensionAmount();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setLineExtensionAmount method, of class Invoice.
+     */
+    @Test
+    public void testSetLineExtensionAmount() {
+        System.out.println("setLineExtensionAmount");
+        String lineExtensionAmount = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setLineExtensionAmount(lineExtensionAmount);
+        assertEquals(lineExtensionAmount, i.getLineExtensionAmount());
+    }
+
+    /**
+     * Test of getTaxExclusiveAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetTaxExclusiveAmount() {
+        System.out.println("getTaxExclusiveAmount");
+        String expResult = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setTaxExclusiveAmount(expResult);
+        String result = i.getTaxExclusiveAmount();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setTaxExclusiveAmount method, of class Invoice.
+     */
+    @Test
+    public void testSetTaxExclusiveAmount() {
+        System.out.println("setTaxExclusiveAmount");
+        String taxExclusiveAmount = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setTaxExclusiveAmount(taxExclusiveAmount);
+        assertEquals(taxExclusiveAmount, i.getTaxExclusiveAmount());
+    }
+
+    /**
+     * Test of getTaxInclusiveAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetTaxInclusiveAmount() {
+        System.out.println("getTaxInclusiveAmount");
+        String expResult = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setTaxInclusiveAmount(expResult);
+        String result = i.getTaxInclusiveAmount();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setTaxInclusiveAmount method, of class Invoice.
+     */
+    @Test
+    public void testSetTaxInclusiveAmount() {
+        System.out.println("setTaxInclusiveAmount");
+        String taxInclusiveAmount = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setTaxInclusiveAmount(taxInclusiveAmount);
+        assertEquals(taxInclusiveAmount, i.getTaxInclusiveAmount());
+    }
+
+    /**
+     * Test of getPayableAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetPayableAmount() {
+        System.out.println("getPayableAmount");
+        String expResult = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setPayableAmount(expResult);
+        String result = i.getPayableAmount();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setPayableAmount method, of class Invoice.
+     */
+    @Test
+    public void testSetPayableAmount() {
+        System.out.println("setPayableAmount");
+        String payableAmount = "99.99";
+        Invoice i = new Invoice("1", "EUR", true);
+        i.setPayableAmount(payableAmount);
+        assertEquals(payableAmount, i.getPayableAmount());
     }
 
 }

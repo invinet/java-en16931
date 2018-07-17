@@ -28,10 +28,10 @@ public class Invoice {
     private Date dueDate;
     private Entity sellerParty;
     private Entity buyerParty;
-    private MonetaryAmount lineExtensionAmount;
-    private MonetaryAmount taxExclusiveAmount;
-    private MonetaryAmount taxInclusiveAmount;
-    private MonetaryAmount payableAmount;
+    private MonetaryAmount _lineExtensionAmount;
+    private MonetaryAmount _taxExclusiveAmount;
+    private MonetaryAmount _taxInclusiveAmount;
+    private MonetaryAmount _payableAmount;
     private final boolean importedFromXml;
     private final ArrayList<InvoiceLine> lines;
 
@@ -188,43 +188,43 @@ public class Invoice {
 
     public String getLineExtensionAmount() {
         if (this.importedFromXml) {
-            return this.moneyToString(lineExtensionAmount);
+            return this.moneyToString(_lineExtensionAmount);
         } else {
             return this.moneyToString(this.grossSubtotal(null));
         }
     }
 
     public void setLineExtensionAmount(String lineExtensionAmount) {
-        this.lineExtensionAmount = Money.of(new BigDecimal(lineExtensionAmount), this.currency);
+        this._lineExtensionAmount = Money.of(new BigDecimal(lineExtensionAmount), this.currency);
     }
 
     public String getTaxExclusiveAmount() {
         if (this.importedFromXml) {
-            return this.moneyToString(taxExclusiveAmount);
+            return this.moneyToString(_taxExclusiveAmount);
         } else {
             return this.moneyToString(this.subtotal(null));
         }
     }
 
     public void setTaxExclusiveAmount(String taxExclusiveAmount) {
-        this.taxExclusiveAmount = Money.of(new BigDecimal(taxExclusiveAmount), this.currency);
+        this._taxExclusiveAmount = Money.of(new BigDecimal(taxExclusiveAmount), this.currency);
     }
 
     public String getTaxInclusiveAmount() {
         if (this.importedFromXml) {
-            return this.moneyToString(taxInclusiveAmount);
+            return this.moneyToString(_taxInclusiveAmount);
         } else {
             return this.moneyToString(this.total());
         }
     }
 
     public void setTaxInclusiveAmount(String taxInclusiveAmount) {
-        this.taxInclusiveAmount = Money.of(new BigDecimal(taxInclusiveAmount), this.currency);
+        this._taxInclusiveAmount = Money.of(new BigDecimal(taxInclusiveAmount), this.currency);
     }
 
     public String getPayableAmount() {
         if (this.importedFromXml) {
-            return this.moneyToString(payableAmount);
+            return this.moneyToString(_payableAmount);
         } else {
             MonetaryAmount prepaidAmount = Money.of(0, this.currency); // TODO
             return this.moneyToString(this.total().subtract(prepaidAmount));
@@ -232,6 +232,6 @@ public class Invoice {
     }
 
     public void setPayableAmount(String payableAmount) {
-        this.payableAmount = Money.of(new BigDecimal(payableAmount), this.currency);
+        this._payableAmount = Money.of(new BigDecimal(payableAmount), this.currency);
     }
 }
