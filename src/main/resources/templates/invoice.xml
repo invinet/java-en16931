@@ -69,6 +69,42 @@
       </cac:Contact>
     </cac:Party>
   </cac:AccountingCustomerParty>
+  {%- if invoice.isDiscountSet() %}
+  <cac:AllowanceCharge>
+    <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+    <cbc:AllowanceChargeReason>discount</cbc:AllowanceChargeReason>
+    <cbc:MultiplierFactorNumeric>{{ invoice.getStringDiscountPercent() }}</cbc:MultiplierFactorNumeric>
+    <cbc:Amount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.getDiscountAmount()) }}</cbc:Amount>
+    <cbc:BaseAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getDiscountBaseAmount() }}</cbc:BaseAmount>
+    {%- for tax in invoice.uniqueTaxes -%}
+    <cac:TaxCategory>
+      <cbc:ID>{{ tax.getCategory() }}</cbc:ID>
+      <cbc:Percent>{{ tax.getStringPercent() }}</cbc:Percent>
+      <cac:TaxScheme>
+        <cbc:ID>VAT</cbc:ID>
+      </cac:TaxScheme>
+    </cac:TaxCategory>
+    {%- endfor %}
+  </cac:AllowanceCharge>
+  {%- endif %}
+  {%- if invoice.isChargeSet() %}
+  <cac:AllowanceCharge>
+    <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+    <cbc:AllowanceChargeReason>charge</cbc:AllowanceChargeReason>
+    <cbc:MultiplierFactorNumeric>{{ invoice.getStringChargePercent() }}</cbc:MultiplierFactorNumeric>
+    <cbc:Amount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.getChargeAmount) }}</cbc:Amount>
+    <cbc:BaseAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getChargeBaseAmount() }}</cbc:BaseAmount>
+    {%- for tax in invoice.uniqueTaxes() %}
+    <cac:TaxCategory>
+      <cbc:ID>{{ tax.getCategory() }}</cbc:ID>
+      <cbc:Percent>{{ tax.getStringPercent() }}</cbc:Percent>
+      <cac:TaxScheme>
+        <cbc:ID>VAT</cbc:ID>
+      </cac:TaxScheme>
+    </cac:TaxCategory>
+    {%- endfor %}
+  </cac:AllowanceCharge>
+  {%- endif %}
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.taxAmount(null)) }}</cbc:TaxAmount>
     {% for tax in invoice.uniqueTaxes() -%}
@@ -89,6 +125,12 @@
     <cbc:LineExtensionAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getLineExtensionAmount() }}</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getTaxExclusiveAmount() }}</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getTaxInclusiveAmount() }}</cbc:TaxInclusiveAmount>
+    {% if invoice.isDiscountSet() -%}
+    <cbc:AllowanceTotalAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.getDiscountAmount()) }}</cbc:AllowanceTotalAmount>
+    {% endif -%}
+    {% if invoice.isChargeSet() -%}
+      <cbc:ChargeTotalAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.getChargeAmount()) }}</cbc:ChargeTotalAmount>
+    {% endif -%}
     <cbc:PayableAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getPayableAmount() }}</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   {% for line in invoice.getLines() -%}

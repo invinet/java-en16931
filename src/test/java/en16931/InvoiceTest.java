@@ -514,4 +514,79 @@ public class InvoiceTest {
         instance.setDueDate(new Date());
         instance.save("/tmp/invoice.xml");
     }
+
+    /**
+     * Test of charges and friends
+     */
+    @Test
+    public void testChargesAndFriends() {
+        System.out.println("save");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.setSellerParty(seller);
+        instance.setBuyerParty(buyer);
+        instance.setIssueDate(new Date());
+        instance.setDueDate(new Date());
+        instance.setChargeAmount(10);
+        MonetaryAmount expSubTotal = Money.of(83.8, "EUR");
+        MonetaryAmount expTotal = Money.of(101.4, "EUR");
+        assertEquals(expSubTotal, instance.subtotal(null));
+        assertEquals(expTotal, instance.total());
+    }
+
+    /**
+     * Test of dicount and friends
+     */
+    @Test
+    public void testDiscountAndFriends() {
+        System.out.println("save");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.setSellerParty(seller);
+        instance.setBuyerParty(buyer);
+        instance.setIssueDate(new Date());
+        instance.setDueDate(new Date());
+        instance.setDiscountAmount(10);
+        MonetaryAmount expSubTotal = Money.of(63.8, "EUR");
+        MonetaryAmount expTotal = Money.of(77.2, "EUR");
+        assertEquals(expSubTotal, instance.subtotal(null));
+        assertEquals(expTotal, instance.total());
+    }
+
+    /**
+     * Test of dicount and charge together
+     */
+    @Test
+    public void testDiscountAndCharge() {
+        System.out.println("save");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.setSellerParty(seller);
+        instance.setBuyerParty(buyer);
+        instance.setIssueDate(new Date());
+        instance.setDueDate(new Date());
+        instance.setDiscountPercent(10);
+        instance.setChargePercent(5);
+        MonetaryAmount expSubTotal = Money.of(70.11, "EUR");
+        MonetaryAmount expTotal = Money.of(84.83, "EUR");
+        assertEquals(expSubTotal, instance.subtotal(null));
+        assertEquals(expTotal, instance.total());
+    }
+
+    /**
+     * Test of save method with charges and discounts
+     */
+    @Test
+    public void testChargesAndDiscountSave() {
+        System.out.println("saveChargesAndDiscounts");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.setSellerParty(seller);
+        instance.setBuyerParty(buyer);
+        instance.setIssueDate(new Date());
+        instance.setDueDate(new Date());
+        instance.setDiscountPercent(10);
+        instance.setChargePercent(5);
+        instance.save("/tmp/invoice_with_charges.xml");
+    }
 }

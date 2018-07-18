@@ -1,12 +1,11 @@
 package en16931;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.Class.forName;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -14,8 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
@@ -35,6 +32,10 @@ public class Invoice {
     private Date dueDate;
     private Entity sellerParty;
     private Entity buyerParty;
+    private Double chargePercent;
+    private MonetaryAmount chargeAmount;
+    private Double discountPercent;
+    private MonetaryAmount discountAmount;
     private MonetaryAmount _lineExtensionAmount;
     private MonetaryAmount _taxExclusiveAmount;
     private MonetaryAmount _taxInclusiveAmount;
@@ -136,6 +137,106 @@ public class Invoice {
         this.lines.add(line);
     }
 
+    public double getChargePercent() {
+        return chargePercent;
+    }
+
+    public String getStringChargePercent() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        DecimalFormat formatter = (DecimalFormat)nf;
+        formatter.applyPattern("#0.00");
+        return formatter.format(chargePercent * 100);
+    }
+
+    public void setChargePercent(double percent) {
+        if (percent > 1 || percent < -1) {
+            this.chargePercent = percent / 100;
+        } else {
+            this.chargePercent = percent;
+        }
+        this.chargeAmount = this.grossSubtotal(null)
+                                .multiply(this.chargePercent)
+                                .with(Monetary.getDefaultRounding());
+    }
+
+    public MonetaryAmount getChargeAmount() {
+        if (chargeAmount == null) {
+            return Money.of(0, this.currency);
+        } else {
+            return chargeAmount;
+        }
+    }
+
+    public boolean isChargeSet() {
+        return chargeAmount != null;
+    }
+
+    public void setChargeAmount(double chargeAmount) {
+        this.chargeAmount = Money.of(chargeAmount, this.currency);
+        BigDecimal gross = this.grossSubtotal(null).getNumber().numberValue(BigDecimal.class);
+        BigDecimal amount = this.chargeAmount.getNumber().numberValue(BigDecimal.class);
+        this.chargePercent = amount.divide(gross, 2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public double getChargeBaseAmount () {
+        if (this.chargeAmount != null && this.chargePercent != null) {
+            double amount = this.chargeAmount.getNumber().numberValue(BigDecimal.class).doubleValue();
+            return amount / this.chargePercent;
+        } else {
+            return 0;
+        }
+    }
+
+    public double getDiscountPercent() {
+        return discountPercent;
+    }
+
+    public String getStringDiscountPercent() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        DecimalFormat formatter = (DecimalFormat)nf;
+        formatter.applyPattern("#0.00");
+        return formatter.format(discountPercent * 100);
+    }
+
+    public void setDiscountPercent(double percent) {
+        if (percent > 1 || percent < -1) {
+            this.discountPercent = percent / 100;
+        } else {
+            this.discountPercent = percent;
+        }
+        this.discountAmount = this.grossSubtotal(null)
+                                .multiply(this.discountPercent)
+                                .with(Monetary.getDefaultRounding());
+    }
+
+    public MonetaryAmount getDiscountAmount() {
+        if (discountAmount == null) {
+            return Money.of(0, this.currency);
+        } else {
+            return discountAmount;
+        }
+    }
+
+    public boolean isDiscountSet() {
+        return discountAmount != null;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = Money.of(discountAmount, this.currency);
+        BigDecimal gross = this.grossSubtotal(null).getNumber().numberValue(BigDecimal.class);
+        BigDecimal amount = this.discountAmount.getNumber().numberValue(BigDecimal.class);
+        this.discountPercent = amount.divide(gross, 2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public double getDiscountBaseAmount () {
+        if (this.discountAmount != null && this.discountPercent != null) {
+            double amount = this.discountAmount.getNumber().numberValue(BigDecimal.class).doubleValue();
+            return amount / this.discountPercent;
+        } else {
+            return 0;
+        }
+    }
+
     public ArrayList<InvoiceLine> linesWithTaxes(Tax tax) {
         if (tax == null) {
             return this.lines;
@@ -160,8 +261,8 @@ public class Invoice {
     }
 
     public MonetaryAmount taxableBase(Tax tax) {
-        MonetaryAmount discount = Money.of(0, this.currency); //TODO
-        MonetaryAmount charge = Money.of(0, this.currency); //TODO
+        MonetaryAmount discount = this.getDiscountAmount();
+        MonetaryAmount charge = this.getChargeAmount();
         return this.grossSubtotal(tax)
                 .subtract(discount)
                 .add(charge)
@@ -197,8 +298,8 @@ public class Invoice {
     }
 
     public MonetaryAmount subtotal(Tax tax) {
-        MonetaryAmount discount = Money.of(0, this.currency); //TODO
-        MonetaryAmount charge = Money.of(0, this.currency); //TODO
+        MonetaryAmount discount = this.getDiscountAmount();
+        MonetaryAmount charge = this.getChargeAmount();
         return this.grossSubtotal(tax)
                 .subtract(discount)
                 .add(charge)

@@ -14,7 +14,7 @@ public class InvoiceLine {
     
     private String itemName;
     private String unitCode;
-    private double quantity;
+    private Double quantity;
     private MonetaryAmount price;
     private MonetaryAmount lineExtensionAmount;
     private CurrencyUnit currency;
