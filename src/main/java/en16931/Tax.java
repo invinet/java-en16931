@@ -1,7 +1,10 @@
 package en16931;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,6 +31,14 @@ public class Tax {
 
     public double getPercent() {
         return percent;
+    }
+
+    public String getStringPercent() {
+        // We want the dot as a decimal separator
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        DecimalFormat formatter = (DecimalFormat)nf;
+        formatter.applyPattern("#0.00");
+        return formatter.format(percent * 100);
     }
 
     public void setPercent(double percent) {

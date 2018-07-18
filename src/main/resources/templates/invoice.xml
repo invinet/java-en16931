@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+  <cbc:ID>{{ invoice.getInvoiceId() }}</cbc:ID>
+  <cbc:IssueDate>{{ invoice.dateToString(invoice.getIssueDate()) }}</cbc:IssueDate>
+  {% if invoice.getDueDate() != null -%}
+    <cbc:DueDate>{{ invoice.dateToString(invoice.getDueDate()) }}</cbc:DueDate>
+  {% endif -%}
+  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+  <cbc:DocumentCurrencyCode>{{ invoice.getCurrency().getCurrencyCode() }}</cbc:DocumentCurrencyCode>
+  <cbc:TaxCurrencyCode>{{ invoice.getCurrency().getCurrencyCode() }}</cbc:TaxCurrencyCode>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="{{ invoice.getSellerParty().getEndpointScheme() }}">{{ invoice.getSellerParty().getPartyLegalEntityId() }}</cbc:EndpointID>
+      <cac:PartyName>
+        <cbc:Name>{{ invoice.getSellerParty().getName() }}</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>{{ invoice.getSellerParty().getPostalAddress().getAddress() }}</cbc:StreetName>
+        <cbc:CityName>{{ invoice.getSellerParty().getPostalAddress().getCity() }}</cbc:CityName>
+        <cbc:PostalZone>{{ invoice.getSellerParty().getPostalAddress().getPostalZone() }}</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode listID="ISO3166-1:Alpha2">{{ invoice.getSellerParty().getPostalAddress().getCountry() }}</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>{{ invoice.getSellerParty().getPartyLegalEntityId() }}</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>{{ invoice.getSellerParty().getName() }}</cbc:RegistrationName>
+        <cbc:CompanyID>{{ invoice.getSellerParty().getPartyLegalEntityId() }}</cbc:CompanyID>
+      </cac:PartyLegalEntity>                              
+      <cac:Contact>
+        <cbc:ElectronicMail>{{ invoice.getSellerParty().getMail() }}</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="{{ invoice.getBuyerParty().getEndpointScheme() }}">{{ invoice.getBuyerParty().getPartyLegalEntityId() }}</cbc:EndpointID>
+      <cac:PartyName>
+        <cbc:Name>{{ invoice.getBuyerParty().getName() }}</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>{{ invoice.getBuyerParty().getPostalAddress().getAddress() }}</cbc:StreetName>
+        <cbc:CityName>{{ invoice.getBuyerParty().getPostalAddress().getCity() }}</cbc:CityName>
+        <cbc:PostalZone>{{ invoice.getBuyerParty().getPostalAddress().getPostalZone() }}</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode listID="ISO3166-1:Alpha2">{{ invoice.getBuyerParty().getPostalAddress().getCountry() }}</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>{{ invoice.getBuyerParty().getPartyLegalEntityId() }}</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>{{ invoice.getBuyerParty().getName() }}</cbc:RegistrationName>
+        <cbc:CompanyID>{{ invoice.getBuyerParty().getPartyLegalEntityId() }}</cbc:CompanyID>
+      </cac:PartyLegalEntity>                              
+      <cac:Contact>
+        <cbc:ElectronicMail>{{ invoice.getBuyerParty().getMail() }}</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.taxAmount(null)) }}</cbc:TaxAmount>
+    {% for tax in invoice.uniqueTaxes() -%}
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.taxableBase(tax)) }}</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(invoice.taxAmount(tax)) }}</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:ID>{{ tax.getCategory() }}</cbc:ID>
+          <cbc:Percent>{{ tax.getStringPercent() }}</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    {% endfor -%}
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getLineExtensionAmount() }}</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getTaxExclusiveAmount() }}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getTaxInclusiveAmount() }}</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.getPayableAmount() }}</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  {% for line in invoice.getLines() -%}
+  <cac:InvoiceLine>
+    <cbc:ID>{{ loop.index }}</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="{{ line.getUnitCode() }}">{{ line.getQuantity() }}</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="{{ invoice.getCurrency().getCurrencyCode() }}">{{ invoice.moneyToString(line.getLineExtensionAmount()) }}</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>{{ line.getItemName() }}</cbc:Name>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>{{ line.getTax().getCategory() }}</cbc:ID>
+        <cbc:Percent>{{ line.getTax().getStringPercent() }}</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">{{ invoice.moneyToString(line.getPrice()) }}</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine> 
+  {% endfor -%}
+</Invoice>

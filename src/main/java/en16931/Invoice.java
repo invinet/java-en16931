@@ -1,20 +1,27 @@
 package en16931;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import static java.lang.Class.forName;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
-import javax.money.format.AmountFormatQueryBuilder;
-import javax.money.format.MonetaryAmountFormat;
-import javax.money.format.MonetaryFormats;
 import org.javamoney.moneta.Money;
-import org.javamoney.moneta.format.CurrencyStyle;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
 
 /**
  *
@@ -40,6 +47,32 @@ public class Invoice {
         this.invoiceId = invoiceId;
         this.currency = Monetary.getCurrency(currency);
         this.importedFromXml = importedFromXml;
+    }
+
+    public String toXml() {
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/invoice.xml");
+        JtwigModel model = JtwigModel.newModel().with("invoice", this);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        template.render(model, baos);
+        String result = baos.toString();
+        return result;
+    }
+
+    public void save(String path) {
+        // Is there a better way?
+        File file = new File(path);
+        try {
+            FileWriter fileWriter = new FileWriter(file, false);
+            try {
+                fileWriter.write(this.toXml());
+            } catch (IOException e) {
+                System.out.println("Exception at writing");
+            } finally {
+                fileWriter.close();
+            }
+        } catch (IOException ex) {
+            System.out.println("Exception at opening file");
+        }
     }
 
     public String getInvoiceId() {
@@ -72,6 +105,11 @@ public class Invoice {
 
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public String dateToString(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
     }
 
     public Entity getSellerParty() {

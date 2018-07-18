@@ -13,24 +13,27 @@ import org.javamoney.moneta.Money;
 public class InvoiceLine {
     
     private String itemName;
+    private String unitCode;
     private double quantity;
     private MonetaryAmount price;
     private MonetaryAmount lineExtensionAmount;
     private CurrencyUnit currency;
     private Tax tax;
 
-    public InvoiceLine(String itemName, double quantity, double price, String currency) {
+    public InvoiceLine(String itemName, String unitCode, double quantity, double price, String currency) {
         this.currency = Monetary.getCurrency(currency);
         this.itemName = itemName;
+        this.unitCode = unitCode;
         this.quantity = quantity;
         this.price = Money.of(price, this.currency);
         //this.price = Monetary.getDefaultAmountFactory()
         //    .setCurrency(this.currency).setNumber(price).create();
     }
 
-    public InvoiceLine(String itemName, double quantity, double price, String currency, Tax tax) {
+    public InvoiceLine(String itemName, String unitCode, double quantity, double price, String currency, Tax tax) {
         this.currency = Monetary.getCurrency(currency);
         this.itemName = itemName;
+        this.unitCode = unitCode;
         this.quantity = quantity;
         this.price = Money.of(price, this.currency);
         this.tax = tax;
@@ -42,6 +45,14 @@ public class InvoiceLine {
     
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+
+    public String getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(String unitCode) {
+        this.unitCode = unitCode;
     }
 
     public double getQuantity() {

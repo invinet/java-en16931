@@ -20,7 +20,7 @@ public class InvoiceLineTest {
 
     public InvoiceLineTest() {
         this.tax = new Tax(0.21, "S", "IVA", "");
-        this.instance = new InvoiceLine("foo", 3, 20.1, "EUR", tax);
+        this.instance = new InvoiceLine("foo", "EA", 3, 20.1, "EUR", tax);
     }
 
     /**

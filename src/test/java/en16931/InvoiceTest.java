@@ -27,18 +27,22 @@ public class InvoiceTest {
     private final InvoiceLine line1;
     private final InvoiceLine line2;
     private final InvoiceLine line3;
+    private final PostalAddress postal;
 
     public InvoiceTest() {
+        this.postal = new PostalAddress("easy street", "08080", "Barcelona", "ES");
         this.instance = new Invoice("1", "EUR", false);
         this.seller = new Entity("Acme Inc.", "VAT", "ES34626691F", "ES34626691F",
                 "Acme INc.", "acme@acme.io", "ES76281415Y", "ES:VAT");
+        this.seller.setPostalAddress(postal);
         this.buyer = new Entity("Corp Inc.", "VAT", "ES76281415Y", "ES76281415Y",
                 "Corp INc.", "corp@corp.io", "ES76281415Y", "ES:VAT");
+        this.buyer.setPostalAddress(postal);
         this.tax = new Tax(0.21, "S", "IVA", "");
-        this.tax1 = new Tax(0.1, "AE", "IVA", "");
-        this.line1 = new InvoiceLine("foo", 3, 20.1, "EUR", tax);
-        this.line2 = new InvoiceLine("bar", 5, 2.7, "EUR", tax);
-        this.line3 = new InvoiceLine("bar", 2, 10.3, "EUR", tax1);
+        this.tax1 = new Tax(0.1, "S", "IVA", "");
+        this.line1 = new InvoiceLine("foo", "EA", 3, 20.1, "EUR", tax);
+        this.line2 = new InvoiceLine("bar", "EA", 5, 2.7, "EUR", tax);
+        this.line3 = new InvoiceLine("bar", "EA", 2, 10.3, "EUR", tax1);
     }
 
     @BeforeClass
@@ -478,4 +482,36 @@ public class InvoiceTest {
         assertEquals(payableAmount, i.getPayableAmount());
     }
 
+    /**
+     * Test of toXml method, of class Invoice
+     */
+    @Test
+    public void testToXml() {
+        System.out.println("toXml");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        instance.setSellerParty(seller);
+        instance.setBuyerParty(buyer);
+        instance.setIssueDate(new Date());
+        instance.setDueDate(new Date());
+        String result = instance.toXml();
+        System.out.println(result);
+    }
+
+    /**
+     * Test of save method, of class Invoice
+     */
+    @Test
+    public void testSave() {
+        System.out.println("save");
+        instance.addLine(line1);
+        instance.addLine(line2);
+        instance.addLine(line3);
+        instance.setSellerParty(seller);
+        instance.setBuyerParty(buyer);
+        instance.setIssueDate(new Date());
+        instance.setDueDate(new Date());
+        instance.save("/tmp/invoice.xml");
+    }
 }

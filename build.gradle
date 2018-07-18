@@ -19,14 +19,14 @@ repositories {
     // You may define additional repositories, or even remove "mavenCentral()".
     // Read more about repositories here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
+    jcenter()
 }
 
 dependencies {
     // Work with money
-    //compile group: 'org.javamoney', name: 'moneta', version: '1.2.1', ext: 'pom'
     compile 'org.javamoney:moneta:1.2.1'
-    // compile 'javax.money:money-api-bp:1.0'
-    // TODO: Add dependencies here ...
+    // templates to generate XML
+    compile "org.jtwig:jtwig-core:5.87.0.RELEASE"
     // You can read more about how to add dependency here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
     testCompile group: 'junit', name: 'junit', version: '4.10'
