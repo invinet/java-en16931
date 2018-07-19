@@ -4,7 +4,7 @@ java-en16931
 .. image:: https://travis-ci.org/invinet/java-en16931.svg?branch=master
     :target: https://travis-ci.org/invinet/java-en16931
 
- .. image:: https://codecov.io/gh/invinet/java-en16931/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/invinet/java-en16931/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/invinet/java-en16931
 
 Java Library to read, write and manage the new `EN16931 Invoice format <http://docs.peppol.eu/poacc/billing/3.0/bis/>`_.
