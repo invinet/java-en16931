@@ -1,17 +1,15 @@
 package en16931;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import javax.money.UnknownCurrencyException;
 import org.javamoney.moneta.Money;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
 
 /**
  *
@@ -42,23 +40,7 @@ public class InvoiceTest {
         this.tax1 = new Tax(0.1, "S", "IVA", "");
         this.line1 = new InvoiceLine("foo", "EA", 3, 20.1, "EUR", tax);
         this.line2 = new InvoiceLine("bar", "EA", 5, 2.7, "EUR", tax);
-        this.line3 = new InvoiceLine("bar", "EA", 2, 10.3, "EUR", tax1);
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
+        this.line3 = new InvoiceLine("baz", "EA", 2, 10.3, "EUR", tax1);
     }
 
     /**
@@ -588,5 +570,220 @@ public class InvoiceTest {
         instance.setDiscountPercent(10);
         instance.setChargePercent(5);
         instance.save("/tmp/invoice_with_charges.xml");
+    }
+
+    /**
+     * Test of dateToString method, of class Invoice.
+     * @throws java.text.ParseException
+     */
+    @Test
+    public void testDateToString() throws ParseException {
+        System.out.println("dateToString");
+        String expResult = "2018-06-21";
+        SimpleDateFormat parser=new SimpleDateFormat("yyyy-MM-dd");
+        Date date = parser.parse(expResult);
+        String result = instance.dateToString(date);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getPaymentMeansCode method, of class Invoice.
+     */
+    @Test
+    public void testGetPaymentMeansCode() {
+        System.out.println("getPaymentMeansCode");
+        String expResult = "10";
+        instance.setPaymentMeansCode("10");
+        String result = instance.getPaymentMeansCode();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setPaymentMeansCode method, of class Invoice.
+     */
+    @Test
+    public void testSetPaymentMeansCode() {
+        System.out.println("setPaymentMeansCode");
+        String paymentMeansCode = "10";
+        instance.setPaymentMeansCode(paymentMeansCode);
+        assertEquals(paymentMeansCode, instance.getPaymentMeansCode());
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetPaymentMeansCodeWrong() {
+        System.out.println("setPaymentMeansCodeWrong");
+        instance.setPaymentMeansCode("foo");
+    }
+
+    /**
+     * Test of getChargePercent method, of class Invoice.
+     */
+    @Test
+    public void testGetChargePercent() {
+        System.out.println("getChargePercent");
+        double expResult = 0.1;
+        instance.setChargePercent(10);
+        double result = instance.getChargePercent();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getStringChargePercent method, of class Invoice.
+     */
+    @Test
+    public void testGetStringChargePercent() {
+        System.out.println("getStringChargePercent");
+        String expResult = "10.00";
+        instance.setChargePercent(10);
+        String result = instance.getStringChargePercent();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setChargePercent method, of class Invoice.
+     */
+    @Test
+    public void testSetChargePercent() {
+        System.out.println("setChargePercent");
+        double percent = 0.1;
+        instance.setChargePercent(10);
+        assertEquals(percent, instance.getChargePercent(), 0.0);
+    }
+
+    /**
+     * Test of getChargeAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetChargeAmount() {
+        System.out.println("getChargeAmount");
+        instance.addLine(line1);
+        MonetaryAmount expResult = Money.of(10, "EUR");
+        instance.setChargeAmount(10);
+        MonetaryAmount result = instance.getChargeAmount();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of isChargeSet method, of class Invoice.
+     */
+    @Test
+    public void testIsChargeSet() {
+        System.out.println("isChargeSet");
+        instance.addLine(line2);
+        assertFalse(instance.isChargeSet());
+        instance.setChargePercent(10);
+        assertTrue(instance.isChargeSet());
+    }
+
+    /**
+     * Test of setChargeAmount method, of class Invoice.
+     */
+    @Test
+    public void testSetChargeAmount() {
+        System.out.println("setChargeAmount");
+        instance.addLine(line3);
+        double chargeAmount = 10;
+        instance.setChargeAmount(chargeAmount);
+        assertEquals(Money.of(chargeAmount, "EUR"), instance.getChargeAmount());
+        
+    }
+
+    /**
+     * Test of getChargeBaseAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetChargeBaseAmount() {
+        System.out.println("getChargeBaseAmount");
+        instance.addLine(line3);
+        instance.setChargeAmount(10);
+        String expResult = "20.41";
+        String result = instance.getChargeBaseAmount();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getDiscountPercent method, of class Invoice.
+     */
+    @Test
+    public void testGetDiscountPercent() {
+        System.out.println("getDiscountPercent");
+        double expResult = 0.1;
+        instance.setDiscountPercent(10);
+        double result = instance.getDiscountPercent();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getStringDiscountPercent method, of class Invoice.
+     */
+    @Test
+    public void testGetStringDiscountPercent() {
+        System.out.println("getStringDiscountPercent");
+        String expResult = "10.00";
+        instance.setDiscountPercent(10);
+        String result = instance.getStringDiscountPercent();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setDiscountPercent method, of class Invoice.
+     */
+    @Test
+    public void testSetDiscountPercent() {
+        System.out.println("setDiscountPercent");
+        double percent = 0.1;
+        instance.setDiscountPercent(10);
+        assertEquals(percent, instance.getDiscountPercent(), 0.0);
+    }
+
+    /**
+     * Test of getDiscountAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetDiscountAmount() {
+        System.out.println("getDiscountAmount");
+        instance.addLine(line1);
+        MonetaryAmount expResult = Money.of(15, "EUR");
+        instance.setDiscountAmount(15);
+        MonetaryAmount result = instance.getDiscountAmount();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of isDiscountSet method, of class Invoice.
+     */
+    @Test
+    public void testIsDiscountSet() {
+        System.out.println("isDiscountSet");
+        instance.addLine(line1);
+        assertFalse(instance.isDiscountSet());
+        instance.setDiscountAmount(15);
+        assertTrue(instance.isDiscountSet());
+        
+    }
+
+    /**
+     * Test of setDiscountAmount method, of class Invoice.
+     */
+    @Test
+    public void testSetDiscountAmount() {
+        System.out.println("setDiscountAmount");
+        instance.addLine(line2);
+        double discountAmount = 10;
+        instance.setDiscountAmount(discountAmount);
+        assertEquals(Money.of(discountAmount, "EUR"), instance.getDiscountAmount());
+    }
+
+    /**
+     * Test of getDiscountBaseAmount method, of class Invoice.
+     */
+    @Test
+    public void testGetDiscountBaseAmount() {
+        System.out.println("getDiscountBaseAmount");
+        String expResult = "13.51";
+        instance.addLine(line2);
+        instance.setDiscountAmount(10);
+        String result = instance.getDiscountBaseAmount();
+        assertEquals(expResult, result);
     }
 }

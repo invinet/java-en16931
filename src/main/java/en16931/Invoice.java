@@ -11,8 +11,11 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
@@ -25,6 +28,10 @@ import org.jtwig.JtwigTemplate;
  * @author jtorrents
  */
 public class Invoice {
+    
+    private static final Set<String> PAYMENT_CODES = new HashSet<String>(Arrays.asList(
+        new String[] {"10", "49", "31", "26", "23", "48", "ZZZ"}
+    ));
 
     private String invoiceId;
     private CurrencyUnit currency;
@@ -32,6 +39,7 @@ public class Invoice {
     private Date dueDate;
     private Entity sellerParty;
     private Entity buyerParty;
+    private String paymentMeansCode;
     private Double chargePercent;
     private MonetaryAmount chargeAmount;
     private Double discountPercent;
@@ -129,6 +137,18 @@ public class Invoice {
         this.buyerParty = buyerParty;
     }
 
+    public String getPaymentMeansCode() {
+        return paymentMeansCode;
+    }
+
+    public void setPaymentMeansCode(String paymentMeansCode) {
+        if (PAYMENT_CODES.contains(paymentMeansCode)) {
+            this.paymentMeansCode = paymentMeansCode;
+        } else {
+            throw new IllegalArgumentException("paymentMeansCode must be one of: 10, 49, 31, 26, 23, 48, ZZZ");
+        }
+    }
+
     public ArrayList<InvoiceLine> getLines() {
         return lines;
     }
@@ -178,12 +198,15 @@ public class Invoice {
         this.chargePercent = amount.divide(gross, 2, RoundingMode.HALF_UP).doubleValue();
     }
 
-    public double getChargeBaseAmount () {
+    public String getChargeBaseAmount () {
         if (this.chargeAmount != null && this.chargePercent != null) {
+            NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+            DecimalFormat formatter = (DecimalFormat)nf;
+            formatter.applyPattern("####0.00");
             double amount = this.chargeAmount.getNumber().numberValue(BigDecimal.class).doubleValue();
-            return amount / this.chargePercent;
+            return formatter.format(amount / this.chargePercent);
         } else {
-            return 0;
+            return "0";
         }
     }
 
@@ -228,12 +251,15 @@ public class Invoice {
         this.discountPercent = amount.divide(gross, 2, RoundingMode.HALF_UP).doubleValue();
     }
 
-    public double getDiscountBaseAmount () {
+    public String getDiscountBaseAmount () {
         if (this.discountAmount != null && this.discountPercent != null) {
+            NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+            DecimalFormat formatter = (DecimalFormat)nf;
+            formatter.applyPattern("####0.00");
             double amount = this.discountAmount.getNumber().numberValue(BigDecimal.class).doubleValue();
-            return amount / this.discountPercent;
+            return formatter.format(amount / this.discountPercent);
         } else {
-            return 0;
+            return "0";
         }
     }
 
