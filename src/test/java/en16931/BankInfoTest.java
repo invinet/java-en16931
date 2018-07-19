@@ -87,9 +87,9 @@ public class BankInfoTest {
      */
     @Test
     public void testGetMandate_reference_identifier() {
-        System.out.println("getMandate_reference_identifier");
+        System.out.println("getMandateReferenceIdentifier");
         String expResult = "123";
-        String result = instance.getMandate_reference_identifier();
+        String result = instance.getMandateReferenceIdentifier();
         assertEquals(expResult, result);
     }
 
@@ -98,10 +98,10 @@ public class BankInfoTest {
      */
     @Test
     public void testSetMandate_reference_identifier() {
-        System.out.println("setMandate_reference_identifier");
-        String mandate_reference_identifier = "321";
-        instance.setMandate_reference_identifier(mandate_reference_identifier);
-        assertEquals(mandate_reference_identifier, instance.getMandate_reference_identifier());
+        System.out.println("setMandateReferenceIdentifier");
+        String mandateReferenceIdentifier = "321";
+        instance.setMandateReferenceIdentifier(mandateReferenceIdentifier);
+        assertEquals(mandateReferenceIdentifier, instance.getMandateReferenceIdentifier());
     }
     
     

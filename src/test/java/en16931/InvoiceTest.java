@@ -20,6 +20,8 @@ public class InvoiceTest {
     private final Invoice instance;
     private final Entity seller;
     private final Entity buyer;
+    private final BankInfo sellerBankInfo;
+    private final BankInfo buyerBankInfo;
     private final Tax tax;
     private final Tax tax1;
     private final InvoiceLine line1;
@@ -29,13 +31,17 @@ public class InvoiceTest {
 
     public InvoiceTest() {
         this.postal = new PostalAddress("easy street", "08080", "Barcelona", "ES");
+        this.sellerBankInfo = new BankInfo("1234567", "ES661234567321", "AAAABBCCDDD", "123");
+        this.buyerBankInfo = new BankInfo("7654321", "ES881272121772", "DDDDCCBBAAA", "123");
         this.instance = new Invoice("1", "EUR", false);
         this.seller = new Entity("Acme Inc.", "VAT", "ES34626691F", "ES34626691F",
                 "Acme INc.", "acme@acme.io", "ES76281415Y", "ES:VAT");
         this.seller.setPostalAddress(postal);
+        this.seller.setBankInfo(sellerBankInfo);
         this.buyer = new Entity("Corp Inc.", "VAT", "ES76281415Y", "ES76281415Y",
                 "Corp INc.", "corp@corp.io", "ES76281415Y", "ES:VAT");
         this.buyer.setPostalAddress(postal);
+        this.buyer.setBankInfo(buyerBankInfo);
         this.tax = new Tax(0.21, "S", "IVA", "");
         this.tax1 = new Tax(0.1, "S", "IVA", "");
         this.line1 = new InvoiceLine("foo", "EA", 3, 20.1, "EUR", tax);
@@ -494,6 +500,7 @@ public class InvoiceTest {
         instance.setBuyerParty(buyer);
         instance.setIssueDate(new Date());
         instance.setDueDate(new Date());
+        //instance.setPaymentMeansCode("31");
         instance.save("/tmp/invoice.xml");
     }
 
@@ -502,7 +509,7 @@ public class InvoiceTest {
      */
     @Test
     public void testChargesAndFriends() {
-        System.out.println("save");
+        System.out.println("testCharge");
         instance.addLine(line1);
         instance.addLine(line2);
         instance.setSellerParty(seller);
@@ -521,7 +528,7 @@ public class InvoiceTest {
      */
     @Test
     public void testDiscountAndFriends() {
-        System.out.println("save");
+        System.out.println("testDiscount");
         instance.addLine(line1);
         instance.addLine(line2);
         instance.setSellerParty(seller);
@@ -540,7 +547,7 @@ public class InvoiceTest {
      */
     @Test
     public void testDiscountAndCharge() {
-        System.out.println("save");
+        System.out.println("discountAndCharge");
         instance.addLine(line1);
         instance.addLine(line2);
         instance.setSellerParty(seller);
@@ -569,6 +576,7 @@ public class InvoiceTest {
         instance.setDueDate(new Date());
         instance.setDiscountPercent(10);
         instance.setChargePercent(5);
+        instance.setPaymentMeansCode("49");
         instance.save("/tmp/invoice_with_charges.xml");
     }
 

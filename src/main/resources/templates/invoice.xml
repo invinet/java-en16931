@@ -69,6 +69,41 @@
       </cac:Contact>
     </cac:Party>
   </cac:AccountingCustomerParty>
+  {%- if invoice.getPaymentMeansCode() != null %}
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode>{{ invoice.getPaymentMeansCode() }}</cbc:PaymentMeansCode>
+    {%- if invoice.getPaymentMeansCode() == "49" and invoice.getBuyerParty.getBankInfo().getIban() != null %}
+    <cac:PaymentMandate>
+      {%- if invoice.getBuyerParty().getBankInfo().getMandateReferenceIdentifier() != null %}
+      <cbc:ID>{{ invoice.getBuyerParty().getBankInfo().getMandateReferenceIdentifier() }}</cbc:ID>
+      {%- endif %}
+      <cac:PayerFinancialAccount>
+        <cbc:ID>{{ invoice.getBuyerParty.getBankInfo().getIban() }}</cbc:ID>
+      </cac:PayerFinancialAccount>
+    </cac:PaymentMandate>
+    {%- elseif invoice.getPaymentMeansCode() == "49" and invoice.getBuyerParty.getBankInfo().getAccount() != null %}
+    <cac:PaymentMandate>
+      {%- if invoice.getBuyerParty().getBankInfo().getMandateReferenceIdentifier() != null %}
+      <cbc:ID>{{ invoice.getBuyerParty().getBankInfo().getMandateReferenceIdentifier() }}</cbc:ID>
+      {%- endif %}
+      <cac:PayerFinancialAccount>
+        <cbc:ID>{{ invoice.getBuyerParty.getBankInfo().getAccount() }}</cbc:ID>
+      </cac:PayerFinancialAccount>
+    </cac:PaymentMandate>
+    {%- elseif (invoice.getPaymentMeansCode() == "31") and (invoice.getSellerParty().getBankInfo().getIban() != null) and (invoice.getSellerParty().getBankInfo().getBic() != null) %}
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>{{ invoice.getSellerParty().getBankInfo().getIban() }}</cbc:ID>
+      <cac:FinancialInstitutionBranch>
+        <cbc:ID>{{ invoice.getSellerParty().getBankInfo().getBic() }}</cbc:ID>
+      </cac:FinancialInstitutionBranch>
+    </cac:PayeeFinancialAccount>
+    {%- elseif invoice.getPaymentMeansCode() == "31" and invoice.getSellerParty().getBankInfo().getAccount() != null -%}
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>{{ invoice.getSellerParty().getBankInfo().getAccount() }}</cbc:ID>
+    </cac:PayeeFinancialAccount>
+    {%- endif %}
+  </cac:PaymentMeans>
+  {%- endif %}
   {%- if invoice.isDiscountSet() %}
   <cac:AllowanceCharge>
     <cbc:ChargeIndicator>false</cbc:ChargeIndicator>

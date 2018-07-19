@@ -46,11 +46,11 @@ public class BankInfo {
         }
     }
 
-    public String getMandate_reference_identifier() {
+    public String getMandateReferenceIdentifier() {
         return mandate_reference_identifier;
     }
 
-    public void setMandate_reference_identifier(String mandate_reference_identifier) {
+    public void setMandateReferenceIdentifier(String mandate_reference_identifier) {
         this.mandate_reference_identifier = mandate_reference_identifier;
     }
     
