@@ -97,7 +97,7 @@ public class InvoiceLine {
         if (tax == null) {
             return true;
         } else {
-            return this.tax == tax;
+            return this.tax.equals(tax);
         }
     }
 }

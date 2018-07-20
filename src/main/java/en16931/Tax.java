@@ -23,7 +23,11 @@ public class Tax {
     private String comment;
 
     public Tax(double percent, String category, String name, String comment) {
-        this.percent = percent;
+        if (percent > 1 || percent < -1) {
+            this.percent = percent / 100;
+        } else {
+            this.percent = percent;
+        }
         this.category = category;
         this.name = name;
         this.comment = comment;
