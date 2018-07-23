@@ -139,5 +139,15 @@ public class TaxTest {
         boolean result = instance.equals(obj);
         assertEquals(expResult, result);
     }
-    
+
+    /**
+     * Test of getStringPercent method, of class Tax.
+     */
+    @Test
+    public void testGetStringPercent() {
+        System.out.println("getStringPercent");
+        String expResult = "21.00";
+        String result = instance.getStringPercent();
+        assertEquals(expResult, result);
+    }
 }

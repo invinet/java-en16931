@@ -171,4 +171,40 @@ public class InvoiceLineTest {
         Tax newTax = new Tax(0.1, "AE", "IVA", "");
         assertFalse(instance.hasTax(newTax));
     }
+
+    /**
+     * Test of getUnitCode method, of class InvoiceLine.
+     */
+    @Test
+    public void testGetUnitCode() {
+        System.out.println("getUnitCode");
+        String expResult = "EA";
+        String result = instance.getUnitCode();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setUnitCode method, of class InvoiceLine.
+     */
+    @Test
+    public void testSetUnitCode() {
+        System.out.println("setUnitCode");
+        String unitCode = "DAY";
+        instance.setUnitCode(unitCode);
+        assertEquals(unitCode, instance.getUnitCode());
+        
+    }
+
+    /**
+     * Test of hasTax method, of class InvoiceLine.
+     */
+    @Test
+    public void testHasTax() {
+        System.out.println("hasTax");
+        Tax tax1 = new Tax(0.1, "S", "IVA", "");
+        Tax tax2 = new Tax(0.21, "S", "IVA", "");
+        assertFalse(instance.hasTax(tax1));
+        assertTrue(instance.hasTax(tax2));
+        
+    }
 }

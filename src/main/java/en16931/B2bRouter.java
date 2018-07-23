@@ -43,10 +43,8 @@ public class B2bRouter {
         
         try {
             HttpResponse response = client.execute(httpPost);
-            System.out.println(response.toString());
             in=response.getEntity().getContent();
             String body = IOUtils.toString(in, Consts.UTF_8);
-            System.out.println(body);
         } catch (ClientProtocolException e) {
             System.out.println(e);
         } catch (IOException e) {
