@@ -27,7 +27,7 @@ public class B2bRouter {
     public B2bRouter(String project, String apiKey, Invoice invoice) {
         this.apiKey = apiKey;
         this.project = project;
-        this.url = String.format("http://localhost:3001/projects/%s/invoices/xml.json", project);
+        this.url = String.format("https://app.b2brouter.net/projects/%s/invoices/xml.json", project);
         this.invoice = invoice;
     }
 
