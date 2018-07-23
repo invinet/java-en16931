@@ -132,12 +132,41 @@ public class TaxTest {
      * Test of equals method, of class Tax.
      */
     @Test
-    public void testEquals() {
+    public void testEqualsFalse() {
         System.out.println("equals");
         Object obj = new Tax(0.1, "AE", "IVA", "");
         boolean expResult = false;
         boolean result = instance.equals(obj);
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testEqualsTrue() {
+        System.out.println("equals");
+        Object obj = new Tax(0.21, "S", "IVA", "");
+        assertTrue(instance.equals(obj));
+    }
+    
+    @Test
+    public void testEqualsFalseCategory() {
+        System.out.println("equals");
+        Object obj = new Tax(0.21, "AE", "IVA", "");
+        assertFalse(instance.equals(obj));
+    }
+    
+    @Test
+    public void testEqualsName() {
+        System.out.println("equals");
+        Object obj = new Tax(0.21, "S", "VAT", "");
+        assertFalse(instance.equals(obj));
+    }
+
+        
+    @Test
+    public void testEqualsNull() {
+        System.out.println("equals");
+        Object obj = null;
+        assertFalse(instance.equals(obj));
     }
 
     /**
