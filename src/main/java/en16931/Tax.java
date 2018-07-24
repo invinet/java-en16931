@@ -24,8 +24,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * Class representing a Tax associated to an InvoiceLine.
  *
- * @author jtorrents
  */
 public class Tax {
 
@@ -37,6 +37,13 @@ public class Tax {
     private String name;
     private String comment;
 
+    /**
+     *
+     * @param percent the percentage of the tax
+     * @param category the category code of the tax
+     * @param name the name of the tax
+     * @param comment a comment on the tax
+     */
     public Tax(double percent, String category, String name, String comment) {
         if (percent > 1 || percent < -1) {
             this.percent = percent / 100;
@@ -48,10 +55,20 @@ public class Tax {
         this.comment = comment;
     }
 
+    /**
+     * Returns the percentage of the tax
+     *
+     * @return the percentage
+     */
     public double getPercent() {
         return percent;
     }
 
+    /**
+     * Returns a suitable string representation of the percentage of the tax
+     * 
+     * @return string representation of the percentage
+     */
     public String getStringPercent() {
         // We want the dot as a decimal separator
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
@@ -60,6 +77,11 @@ public class Tax {
         return formatter.format(percent * 100);
     }
 
+    /**
+     * Sets the percentage of the tax
+     *
+     * @param percent the percentage
+     */
     public void setPercent(double percent) {
         if (percent > 1 || percent < -1) {
             this.percent = percent / 100;
@@ -68,10 +90,35 @@ public class Tax {
         } 
     }
 
+    /**
+     * Returns the category code of the tax
+     *
+     * @return the category code
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Sets the category code of the tax
+     * 
+     * <p>It must be one of:
+     * <ul>
+     * <li>AE</li>
+     * <li>L</li>
+     * <li>M</li>
+     * <li>E</li>
+     * <li>S</li>
+     * <li>Z</li>
+     * <li>G</li>
+     * <li>O</li>
+     * <li>K</li>
+     * </ul>
+     * 
+     * @param category the category code
+     * 
+     * @throws IllegalArgumentException if the category code is invalid.
+     */
     public void setCategory(String category) {
         if (CATEGORIES.contains(category)) {
             this.category = category;
@@ -80,22 +127,47 @@ public class Tax {
         }
     }
 
+    /**
+     * Returns the name of the tax
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name of the tax
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the comment on the tax
+     *
+     * @return the comment
+     */
     public String getComment() {
         return comment;
     }
 
+    /**
+     * Sets a comment on the tax
+     *
+     * @param comment the comment
+     */
     public void setComment(String comment) {
         this.comment = comment;
     }
 
+    /**
+     * Returns the hash code of a tax instance
+     *
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
         int hash = 5;
@@ -105,6 +177,12 @@ public class Tax {
         return hash;
     }
 
+    /**
+     * Compares tax instances for equality.
+     *
+     * @param obj
+     * @return boolean
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -128,5 +206,4 @@ public class Tax {
         }
         return true;
     }
-    
 }

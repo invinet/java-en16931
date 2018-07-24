@@ -43,8 +43,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 /**
- *
- * @author jtorrents
+ * Class to validate an Invoice in EN16931 format using the
+ * online service <a href="https://open.validex.net">validex.net</a>.
+ * 
+ * You need an user and a REST API key to be able to use this feature.
+ * 
  */
 public class Validex {
     
@@ -53,6 +56,12 @@ public class Validex {
     String userId;
     Invoice invoice;
 
+    /**
+     *
+     * @param userId your user id at validex.net
+     * @param apiKey the REST API key for your user
+     * @param invoice the Invoice
+     */
     public Validex(String userId, String apiKey, Invoice invoice) {
         this.apiKey = apiKey;
         this.userId = userId;
@@ -60,6 +69,15 @@ public class Validex {
         this.invoice = invoice;
     }
 
+    /**
+     * Validates the XML representation of the invoice using validex.net
+     *
+     * @return boolean
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws KeyManagementException
+     */
     public boolean isValidatValidex() throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         //HttpClient client = HttpClients.createDefault();
         SSLContext sslContext = new SSLContextBuilder()

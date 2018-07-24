@@ -21,18 +21,28 @@ import javax.xml.namespace.NamespaceContext;
 import org.w3c.dom.Document;
 
 /**
- * From https://howtodoinjava.com/xml/xpath-namespace-resolution-example/
+ * Adapted from: https://howtodoinjava.com/xml/xpath-namespace-resolution-example/
  */
 public class NamespaceResolver implements NamespaceContext
 {
     //Store the source document to search the namespaces
     private Document sourceDocument;
  
+    /**
+     *
+     * @param document
+     */
     public NamespaceResolver(Document document) {
         sourceDocument = document;
     }
  
     //The lookup for the namespace uris is delegated to the stored document.
+
+    /**
+     *
+     * @param prefix
+     * @return string namespace URI
+     */
     @Override
     public String getNamespaceURI(String prefix) {
         switch (prefix) {
@@ -45,11 +55,21 @@ public class NamespaceResolver implements NamespaceContext
         }
     }
  
+    /**
+     *
+     * @param namespaceURI
+     * @return prefix of namespace URI
+     */
     @Override
     public String getPrefix(String namespaceURI) {
         return sourceDocument.lookupPrefix(namespaceURI);
     }
  
+    /**
+     *
+     * @param namespaceURI
+     * @return null
+     */
     @SuppressWarnings("rawtypes")
     @Override
     public Iterator getPrefixes(String namespaceURI) {

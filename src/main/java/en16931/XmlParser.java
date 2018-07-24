@@ -37,8 +37,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * Class to parse an XML file in EN16931 format in to an Invoice Instance.
  *
- * @author jtorrents
  */
 public class XmlParser {
 
@@ -47,6 +47,13 @@ public class XmlParser {
     private final XPath xpath;
     final String originalXml;
 
+    /**
+     *
+     * @param path a string representing a path to an XML file
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
     public XmlParser(String path) throws SAXException, IOException, ParserConfigurationException {
         this.path = path;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -60,6 +67,12 @@ public class XmlParser {
         this.originalXml = new String(encoded, Charset.defaultCharset());
     }
     
+    /**
+     * Returns the invoice identification.
+     *
+     * @return the invoice identification.
+     * @throws XPathExpressionException
+     */
     public String getInvoiceID() throws XPathExpressionException {
         // It seems that I cannot use the default xmlns in XPath expressions
         // https://stackoverflow.com/questions/10720452/java-xpath-queries-with-default-namespace-xmlns
@@ -70,12 +83,25 @@ public class XmlParser {
         return invoiceID;
     }
 
+    /**
+     * Returns the currency code
+     *
+     * @return the currency code
+     * @throws XPathExpressionException
+     */
     public String getCurrency() throws XPathExpressionException {
         XPathExpression expr = xpath.compile("/df:Invoice/cbc:DocumentCurrencyCode");
         String Currency = (String) expr.evaluate(document, XPathConstants.STRING);
         return Currency;
     }
 
+    /**
+     * Return the issue date for the invocie
+     *
+     * @return the issue date
+     * @throws XPathExpressionException
+     * @throws ParseException
+     */
     public Date getIssueDate() throws XPathExpressionException, ParseException {
         XPathExpression expr = xpath.compile("/df:Invoice/cbc:IssueDate");
         String date = (String) expr.evaluate(document, XPathConstants.STRING);
@@ -83,6 +109,13 @@ public class XmlParser {
         return parser.parse(date);
     }
 
+    /**
+     * Return the due date of the invoice
+     *
+     * @return the due date
+     * @throws XPathExpressionException
+     * @throws ParseException
+     */
     public Date getDueDate() throws XPathExpressionException, ParseException {
         XPathExpression expr = xpath.compile("/df:Invoice/cbc:DueDate");
         String date = (String) expr.evaluate(document, XPathConstants.STRING);
@@ -90,30 +123,60 @@ public class XmlParser {
         return parser.parse(date);
     }
 
+    /**
+     * Returns the line extension amount of the invoice.
+     *
+     * @return the line extension amount
+     * @throws XPathExpressionException
+     */
     public String getLineExtensionAmount() throws XPathExpressionException {
         XPathExpression expr = xpath.compile("/df:Invoice/cac:LegalMonetaryTotal/cbc:LineExtensionAmount");
         String lineExtensionAmount = (String) expr.evaluate(document, XPathConstants.STRING);
         return lineExtensionAmount;
     }
 
+    /**
+     * Returns the tax exclusive amount of the invoice
+     *
+     * @return the tax exclusive amount
+     * @throws XPathExpressionException
+     */
     public String getTaxExclusiveAmount() throws XPathExpressionException {
         XPathExpression expr = xpath.compile("/df:Invoice/cac:LegalMonetaryTotal/cbc:TaxExclusiveAmount");
         String taxExclusiveAmount = (String) expr.evaluate(document, XPathConstants.STRING);
         return taxExclusiveAmount;
     }
 
+    /**
+     * Returns the tax inclusive amount of the invoice
+     *
+     * @return the tax inclusive amount
+     * @throws XPathExpressionException
+     */
     public String getTaxInclusiveAmount() throws XPathExpressionException {
         XPathExpression expr = xpath.compile("/df:Invoice/cac:LegalMonetaryTotal/cbc:TaxInclusiveAmount");
         String taxInclusiveAmount = (String) expr.evaluate(document, XPathConstants.STRING);
         return taxInclusiveAmount;
     }
 
+    /**
+     * Returns the payable amount of the invoice
+     *
+     * @return the payable amount
+     * @throws XPathExpressionException
+     */
     public String getPayableAmount() throws XPathExpressionException {
         XPathExpression expr = xpath.compile("/df:Invoice/cac:LegalMonetaryTotal/cbc:PayableAmount");
         String payableAmount = (String) expr.evaluate(document, XPathConstants.STRING);
         return payableAmount;
     }
     
+    /**
+     * Returns the Entity that plays the role of Seller party.
+     *
+     * @return an Entity
+     * @throws XPathExpressionException
+     */
     public Entity getSellerParty() throws XPathExpressionException {
         XPathExpression exprPartyLegalEntity = xpath.compile("/df:Invoice/cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID");
         String partyLegalEntity = (String) exprPartyLegalEntity.evaluate(document, XPathConstants.STRING);
@@ -146,6 +209,12 @@ public class XmlParser {
         return entity;
     }
 
+    /**
+     * Returns an Entity that plays the role of Buyer party
+     *
+     * @return an Entity
+     * @throws XPathExpressionException
+     */
     public Entity getBuyerParty() throws XPathExpressionException {
         XPathExpression exprPartyLegalEntity = xpath.compile("/df:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID");
         String partyLegalEntity = (String) exprPartyLegalEntity.evaluate(document, XPathConstants.STRING);
@@ -178,6 +247,12 @@ public class XmlParser {
         return entity;
     }
     
+    /**
+     * Returns an ArrayList of all the InvoiceLines of the Invoice
+     *
+     * @return an ArrayList of InvoiceLines
+     * @throws XPathExpressionException
+     */
     public ArrayList<InvoiceLine> getLines() throws XPathExpressionException {
         ArrayList<InvoiceLine> lines = new ArrayList<>();
         XPathExpression expr = xpath.compile("/df:Invoice/cac:InvoiceLine");
@@ -212,6 +287,12 @@ public class XmlParser {
         return lines;
     }
 
+    /**
+     * Returns the discount amount of the invoice
+     *
+     * @return the discount amount
+     * @throws XPathExpressionException
+     */
     public String getDiscountAmount() throws XPathExpressionException {
         XPathExpression expr = xpath.compile("/df:Invoice/cac:AllowanceCharge");
         NodeList nodeList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
@@ -229,6 +310,12 @@ public class XmlParser {
         return result;
     }
 
+    /**
+     * Returns the charge amount of the invoice
+     *
+     * @return the charge amount
+     * @throws XPathExpressionException
+     */
     public String getChargeAmount() throws XPathExpressionException {
         XPathExpression expr = xpath.compile("/df:Invoice/cac:AllowanceCharge");
         NodeList nodeList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
@@ -246,6 +333,13 @@ public class XmlParser {
         return result;
     }
     
+    /**
+     * Returns an Invoice instance representing the XML file in EN16931 format.
+     *
+     * @return An Invoice
+     * @throws XPathExpressionException
+     * @throws ParseException
+     */
     public Invoice getInvoice() throws XPathExpressionException, ParseException {
         String invoiceID = this.getInvoiceID();
         String currency = this.getCurrency();

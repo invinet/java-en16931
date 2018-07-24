@@ -29,8 +29,11 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.HttpClients;
 
 /**
- *
- * @author jtorrents
+ * Post an invoice to <a href="https://www.b2brouter.net/">b2brouter.net</a>
+ * via its REST API.
+ * 
+ * You need to have an active project in the plataform that has permisions
+ * to upload invoices via REST API.
  */
 public class B2bRouter {
 
@@ -39,6 +42,12 @@ public class B2bRouter {
     String project;
     Invoice invoice;
 
+    /**
+     *
+     * @param project your project ID to which upload the invoice
+     * @param apiKey the API key associated with that project
+     * @param invoice an Invoice
+     */
     public B2bRouter(String project, String apiKey, Invoice invoice) {
         this.apiKey = apiKey;
         this.project = project;
@@ -46,6 +55,11 @@ public class B2bRouter {
         this.invoice = invoice;
     }
 
+    /**
+     * Posts an invoice to <a href="https://www.b2brouter.net/">b2brouter.net</a>
+     *
+     * @throws UnsupportedEncodingException
+     */
     public void postToB2bRouter() throws UnsupportedEncodingException {
         HttpClient client = HttpClients.createDefault();
         InputStream in;

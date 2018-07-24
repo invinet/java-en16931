@@ -16,8 +16,8 @@
 package en16931;
 
 /**
- *
- * @author jtorrents
+ * Class That represents a Postal Address of an Entity
+ * 
  */
 public class PostalAddress {
 
@@ -26,6 +26,13 @@ public class PostalAddress {
     private String city;
     private String country;
 
+    /**
+     *
+     * @param address the address
+     * @param postalZone the postal zone
+     * @param city the City.
+     * @param country the country code in ISO-3166-1 alpha2 format
+     */
     public PostalAddress(String address, String postalZone, String city, String country) {
         this.address = address;
         this.postalZone = postalZone;
@@ -33,37 +40,75 @@ public class PostalAddress {
         this.country = country;
     }
 
+    /**
+     * Returns the address of the Entity.
+     *
+     * @return the address
+     */
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Sets the address of the Entity
+     *
+     * @param address the address
+     */
     public void setAddress(String address) {
         this.address = address;
     }
 
+    /**
+     * Returns the postal zone of the Entity
+     *
+     * @return the postal zone
+     */
     public String getPostalZone() {
         return postalZone;
     }
 
+    /**
+     * Sets the postal zone of the Entity
+     *
+     * @param postalZone the postal zone
+     */
     public void setPostalZone(String postalZone) {
         this.postalZone = postalZone;
     }
 
+    /**
+     * Return the City of the Entity
+     *
+     * @return the City
+     */
     public String getCity() {
         return city;
     }
 
+    /**
+     * Sets the City of the Entity
+     *
+     * @param city the City
+     */
     public void setCity(String city) {
         this.city = city;
     }
 
+    /**
+     * Returns the country code of the Entity in ISO-3166-1 alpha2 format.
+     *
+     * @return the country code in ISO-3166-1 alpha2 format.
+     */
     public String getCountry() {
         return country;
     }
 
+    /**
+     * Sets the country code of the Entity in ISO-3166-1 alpha2 format.
+     *
+     * @param country the country code in ISO-3166-1 alpha2 format.
+     */
     public void setCountry(String country) {
         this.country = country;
     }
-    
-    
 }
