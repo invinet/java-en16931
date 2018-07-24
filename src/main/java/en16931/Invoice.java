@@ -48,6 +48,7 @@ public class Invoice {
     private MonetaryAmount _taxExclusiveAmount;
     private MonetaryAmount _taxInclusiveAmount;
     private MonetaryAmount _payableAmount;
+    private String originalXml;
     private final boolean importedFromXml;
     private final ArrayList<InvoiceLine> lines;
 
@@ -58,13 +59,24 @@ public class Invoice {
         this.importedFromXml = importedFromXml;
     }
 
+    public String getOriginalXml() {
+        return originalXml;
+    }
+
+    public void setOriginalXml(String originalXml) {
+        this.originalXml = originalXml;
+    }
+
     public String toXml() {
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/invoice.xml");
-        JtwigModel model = JtwigModel.newModel().with("invoice", this);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        template.render(model, baos);
-        String result = baos.toString();
-        return result;
+        if (importedFromXml) {
+            return originalXml;
+        } else {
+            JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/invoice.xml");
+            JtwigModel model = JtwigModel.newModel().with("invoice", this);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            template.render(model, baos);
+            return baos.toString();
+        }
     }
 
     public void save(String path) {

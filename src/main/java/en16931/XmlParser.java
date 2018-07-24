@@ -1,6 +1,9 @@
 package en16931;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,19 +28,21 @@ import org.xml.sax.SAXException;
 public class XmlParser {
 
     private final String path;
-    private Document document;
-    private XPath xpath;
+    private final Document document;
+    private final XPath xpath;
+    final String originalXml;
 
     public XmlParser(String path) throws SAXException, IOException, ParserConfigurationException {
         this.path = path;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        //this.document = db.parse(new FileInputStream(this.path));
         this.document = db.parse(this.path);
         XPathFactory xpathFactory = XPathFactory.newInstance();
         this.xpath = xpathFactory.newXPath();
         this.xpath.setNamespaceContext(new NamespaceResolver(this.document));
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        this.originalXml = new String(encoded, Charset.defaultCharset());
     }
     
     public String getInvoiceID() throws XPathExpressionException {
@@ -253,6 +258,7 @@ public class XmlParser {
         if (charge != null) {
             invoice.setChargeAmount(Double.parseDouble(charge));
         }
+        invoice.setOriginalXml(originalXml);
         return invoice;
     }
 }

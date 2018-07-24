@@ -254,7 +254,7 @@ public class XmlParserTest {
         System.out.println("getInvoice");
         Invoice result = instance.getInvoice();
         // test that readed and computed values are the same
-        System.out.println(result.toXml());
+        assertEquals(result.toXml(), instance.originalXml);
         assertEquals(result.grossSubtotal(null), Money.of(new BigDecimal(result.getLineExtensionAmount()), "EUR"));
         assertEquals(result.subtotal(null), Money.of(new BigDecimal(result.getTaxExclusiveAmount()), "EUR"));
         assertEquals(result.total(), Money.of(new BigDecimal(result.getTaxInclusiveAmount()), "EUR"));

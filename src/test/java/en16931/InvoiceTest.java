@@ -794,4 +794,25 @@ public class InvoiceTest {
         String result = instance.getDiscountBaseAmount();
         assertEquals(expResult, result);
     }
+
+    /**
+     * Test of getOriginalXml method, of class Invoice.
+     */
+    @Test
+    public void testGetOriginalXml() {
+        System.out.println("getOriginalXml");
+        String expResult = null;
+        String result = instance.getOriginalXml();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setOriginalXml method, of class Invoice.
+     */
+    @Test
+    public void testSetOriginalXml_String() {
+        System.out.println("setOriginalXml");
+        String originalXml = "";
+        instance.setOriginalXml(originalXml);
+    }
 }
